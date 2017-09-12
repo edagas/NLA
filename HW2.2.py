@@ -30,6 +30,23 @@ class Orthogonalization():
 
         return orthogonalmatrix
         
+    def householder(self):
+        A = self.givenmatrix
+        m = shape(A)[0]
+        n = shape(A)[1]
+        Q = identity(m)
+        for i in range(n-1):
+            Q_i = identity(m)
+            x = A[i:m,i]
+            u = array([norm(x)]+(m-i-1)*[0.])  
+            v_i = x - u
+            v_i /= norm(v_i)
+            Q_i_hat = eye(m-i) - 2*outer(v_i,v_i)
+            Q_i[i:m,i:m] = Q_i_hat
+            Q = Q_i@Q
+            A = Q_i@A
+        return Q, A
+        
     def norm(self, matrix):
         return np.linalg.norm(matrix, ord=2)
         
@@ -53,21 +70,27 @@ class Orthogonalization():
     def determinant(self, matrix):
         return la.det(self.qtq(matrix))
 
-A0 = np.random.rand(6,4)
+A0 = np.random.rand(3,3)
+print(A0)
+#A0 = array([[1,2,3], [2,5,6], [2,2,8]])
 
 A = Orthogonalization(A0)
-Q = A.gramschmidt()
+#Q = A.gramschmidt()
 
-print(A.norm(Q))
-print(A.deviation(Q))
-print(A.allclose(Q))
-print(A.eigenvalues(Q))
-print(A.determinant(Q))
+#print(A.norm(Q))
+#print(A.deviation(Q))
+#print(A.allclose(Q))
+#print(A.eigenvalues(Q))
+#print(A.determinant(Q))
 
-B = la.qr(A0)[0]
+#B = la.qr(A0)[0]
 
-print(A.norm(B))
-print(A.deviation(B))
-print(A.allclose(B))
-print(A.eigenvalues(B))
-print(A.determinant(B))
+#print(A.norm(B))
+#print(A.deviation(B))
+#print(A.allclose(B))
+#print(A.eigenvalues(B))
+#print(A.determinant(B))
+
+Q,R = A.householder()
+print(R)
+print(Q@R)
