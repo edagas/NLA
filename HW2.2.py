@@ -38,8 +38,9 @@ class Orthogonalization():
         for i in range(n-1):
             Q_i = identity(m)
             x = A[i:m,i]
-            u = array([norm(x)]+(m-i-1)*[0.])  
-            v_i = x - u
+            s = int(sign(x[0]))
+            u = s*array([norm(x)]+(m-i-1)*[0.]) 
+            v_i = x + u
             v_i /= norm(v_i)
             Q_i_hat = eye(m-i) - 2*outer(v_i,v_i)
             Q_i[i:m,i:m] = Q_i_hat
@@ -92,5 +93,11 @@ A = Orthogonalization(A0)
 #print(A.determinant(B))
 
 Q,R = A.householder()
-print(R)
+#print(R)
 print(Q@R)
+
+print(A.norm(Q))
+print(A.deviation(Q))
+print(A.allclose(Q))
+print(A.eigenvalues(Q))
+print(A.determinant(Q))
