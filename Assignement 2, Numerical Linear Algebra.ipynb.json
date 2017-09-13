@@ -1,0 +1,499 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A# Ramona Bendias, Eda Dagasan"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Task 1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import scipy.linalg as la\n",
+    "\n",
+    "\n",
+    "class Orthogonalization():\n",
+    "    \"\"\"\n",
+    "    A class of matrices with methods that orthogonalize the objects with\n",
+    "    different algorithms and that evaluate the result in different ways.\n",
+    "    \"\"\"\n",
+    "    \n",
+    "    def __init__(self, givenmatrix):\n",
+    "        self.givenmatrix = givenmatrix\n",
+    "    \n",
+    "    def gramschmidt(self):\n",
+    "        \"\"\"\n",
+    "        Gram-Schmidt orthogonalization of an object of the class. \n",
+    "        The method returns a matrice 'orthogonalmatrix' that is an \n",
+    "        orthogonal basis of range(A).\n",
+    "        \"\"\"\n",
+    "        n = len(self.givenmatrix[0])\n",
+    "        m = len(self.givenmatrix)\n",
+    "        trianglematrix = np.zeros(shape=(n,n))\n",
+    "        orthogonalmatrix = np.array(np.zeros(shape=(self.givenmatrix.shape)))\n",
+    "        v = np.zeros(shape=(n,n))\n",
+    "        for j in range(n):\n",
+    "            v[j] = self.givenmatrix[j]\n",
+    "            for i in range(j-1):\n",
+    "                trianglematrix[i][j] = np.dot(orthogonalmatrix[i],self.givenmatrix[j])\n",
+    "                v[j] = v[j] - trianglematrix[i][j]*orthogonalmatrix[i]\n",
+    "            trianglematrix[j][j] = la.norm(v[j])\n",
+    "            orthogonalmatrix[j] = np.divide(v[j],trianglematrix[j][j])\n",
+    "\n",
+    "        return orthogonalmatrix\n",
+    "   \n",
+    "    def norm(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the 2-norm of a the input matrix A.\n",
+    "        \"\"\"\n",
+    "        return np.linalg.norm(matrix, ord=2)\n",
+    "        \n",
+    "        \n",
+    "    def qtq(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the matrix product of the transpose of the input matrix A with\n",
+    "        itself.\n",
+    "        \"\"\"\n",
+    "        return np.dot(matrix.transpose(),matrix)\n",
+    "        \n",
+    "    def deviation(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the deviation of the output matrix of qtq from the identity \n",
+    "        matrix.\n",
+    "        \"\"\"\n",
+    "        qtq = self.qtq(matrix)\n",
+    "        I = np.identity(len(qtq))\n",
+    "        return self.norm(I-qtq)\n",
+    "        \n",
+    "    def allclose(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns True/False if all the entries of QTQ are closer than a \n",
+    "        certain tolerance to the identity matrix.\n",
+    "        \"\"\"\n",
+    "        qtq = self.qtq(matrix)\n",
+    "        I = np.identity(len(qtq))\n",
+    "        return np.allclose(qtq, I)\n",
+    "        \n",
+    "    def eigenvalues(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns an array with the eigenvalues of qtq of the input matrix A.\n",
+    "        \"\"\"\n",
+    "        return la.eigvals(self.qtq(matrix))\n",
+    "    \n",
+    "    def determinant(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the determinant of qtq of the input matrix A.\n",
+    "        \"\"\"\n",
+    "        return la.det(self.qtq(matrix))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Random matrix [[ 0.71817933  0.80297935  0.66760897  0.12034719]\n",
+      " [ 0.07478469  0.16089319  0.04697639  0.39083824]\n",
+      " [ 0.19026435  0.19110106  0.66118018  0.62857187]\n",
+      " [ 0.3973866   0.97767869  0.1478879   0.5439969 ]]\n",
+      "Orthogonalized matrix [[ 0.56412569  0.63073562  0.52440297  0.09453202]\n",
+      " [ 0.17319779  0.37262101  0.1087951   0.90516282]\n",
+      " [-0.23602742 -0.29439307  0.46346208  0.80176473]\n",
+      " [-0.45502148  0.02198784 -0.67370804 -0.58188441]]\n"
+     ]
+    }
+   ],
+   "source": [
+    "A0 = np.random.rand(4,4)\n",
+    "print('Random matrix', A0)\n",
+    "A = Orthogonalization(A0)\n",
+    "V = A.gramschmidt()\n",
+    "print('Orthogonalized matrix', V)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Task 2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Task 3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Triangular matrix: [[-0.84586696 -1.1982873  -0.78918292 -0.53369087]\n",
+      " [ 0.         -0.47659756  0.27506307 -0.36084838]\n",
+      " [ 0.          0.         -0.45658428 -0.59754839]\n",
+      " [ 0.          0.          0.         -0.29355005]]\n",
+      "B@S [[ 0.71817933  0.80297935  0.66760897  0.12034719]\n",
+      " [ 0.07478469  0.16089319  0.04697639  0.39083824]\n",
+      " [ 0.19026435  0.19110106  0.66118018  0.62857187]\n",
+      " [ 0.3973866   0.97767869  0.1478879   0.5439969 ]]\n",
+      "Norm B: 1.0\n",
+      "Dev of BTB from I: 4.99839120305e-16\n",
+      "BtB close to I? True\n",
+      "Eigenvalues of BTB: [ 1.+0.j  1.+0.j  1.+0.j  1.+0.j]\n",
+      "Determinant of BTB: 1.0\n"
+     ]
+    }
+   ],
+   "source": [
+    "B,S = la.qr(A0)\n",
+    "\n",
+    "print('Triangular matrix:', S)\n",
+    "print('B@S',B@S)\n",
+    "print('Norm B:', A.norm(B))\n",
+    "print('Dev of BTB from I:', A.deviation(B))\n",
+    "print('BtB close to I?', A.allclose(B))\n",
+    "print('Eigenvalues of BTB:', A.eigenvalues(B))\n",
+    "print('Determinant of BTB:', A.determinant(B))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Task 4"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Random matrix [[ 0.402023    0.93459562  0.45279827  0.27279716]\n",
+      " [ 0.16135381  0.84871248  0.68668706  0.50635793]\n",
+      " [ 0.20793518  0.93917365  0.39871541  0.89684444]\n",
+      " [ 0.04216666  0.8315532   0.36631435  0.46161104]]\n",
+      "Triangular matrix: [[ -4.82361495e-01  -1.54038621e+00  -8.10985355e-01  -8.23705099e-01]\n",
+      " [  1.53350146e-17  -8.91358543e-01  -4.88945096e-01  -7.20282715e-01]\n",
+      " [ -5.39708042e-18   1.83429723e-16   2.70112996e-01  -8.24821645e-02]\n",
+      " [ -7.13154163e-18   3.19417538e-17  -2.77555756e-17   3.79645558e-01]]\n",
+      "Q@R: [[ 0.402023    1.58199771  0.72303019  0.92982404]\n",
+      " [-0.18898988 -0.2700845  -0.21821923 -0.32464425]\n",
+      " [ 0.05633435 -0.58733979 -0.4279585  -0.61477195]\n",
+      " [ 0.17933039  0.4966682   0.4649568  -0.0178928 ]]\n",
+      "Norm of Q: 1.0\n",
+      "Deviation of QTQ from I: 6.99871496271e-16\n",
+      "QTQ allclose to I? True\n",
+      "Eigenvalues of QTQ: [ 1.+0.j  1.+0.j  1.+0.j  1.+0.j]\n",
+      "Determinant of QTQ: 1.0000000000000007\n"
+     ]
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "import scipy.linalg as la\n",
+    "\n",
+    "\n",
+    "class Orthogonalization():\n",
+    "    \"\"\"\n",
+    "    A class of matrices with methods that orthogonalize the objects with\n",
+    "    different algorithms and that evaluate the result in different ways.\n",
+    "    \"\"\"\n",
+    "    \n",
+    "    def __init__(self, givenmatrix):\n",
+    "        self.givenmatrix = givenmatrix\n",
+    "        \n",
+    "    def householder(self):\n",
+    "        \"\"\"\n",
+    "        Will not work with a already triangular matrix (:\n",
+    "        \"\"\"\n",
+    "        A = self.givenmatrix\n",
+    "        m = shape(A)[0]\n",
+    "        n = shape(A)[1]\n",
+    "        Q = identity(m)\n",
+    "        for i in range(n):\n",
+    "            Q_i = identity(m)\n",
+    "            x = A[i:m,i]\n",
+    "            s = int(sign(x[0]))\n",
+    "            u = s*array([norm(x)]+(m-i-1)*[0.]) \n",
+    "            v_i = x + u\n",
+    "            v_i /= norm(v_i)\n",
+    "            Q_i_hat = eye(m-i) - 2*outer(v_i,v_i)\n",
+    "            Q_i[i:m,i:m] = Q_i_hat\n",
+    "            Q = Q_i@Q\n",
+    "            A = Q_i@A\n",
+    "        return Q, A\n",
+    "        \n",
+    "    def norm(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the 2-norm of a the input matrix A.\n",
+    "        \"\"\"\n",
+    "        return np.linalg.norm(matrix, ord=2)\n",
+    "        \n",
+    "        \n",
+    "    def qtq(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the matrix product of the transpose of the input matrix A with\n",
+    "        itself.\n",
+    "        \"\"\"\n",
+    "        return np.dot(matrix.transpose(),matrix)\n",
+    "        \n",
+    "    def deviation(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the deviation of the output matrix of qtq from the identity \n",
+    "        matrix.\n",
+    "        \"\"\"\n",
+    "        qtq = self.qtq(matrix)\n",
+    "        I = np.identity(len(qtq))\n",
+    "        return self.norm(I-qtq)\n",
+    "        \n",
+    "    def allclose(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns True/False if all the entries of QTQ are closer than a \n",
+    "        certain tolerance to the identity matrix.\n",
+    "        \"\"\"\n",
+    "        qtq = self.qtq(matrix)\n",
+    "        I = np.identity(len(qtq))\n",
+    "        return np.allclose(qtq, I)\n",
+    "        \n",
+    "    def eigenvalues(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns an array with the eigenvalues of qtq of the input matrix A.\n",
+    "        \"\"\"\n",
+    "        return la.eigvals(self.qtq(matrix))\n",
+    "    \n",
+    "    def determinant(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the determinant of qtq of the input matrix A.\n",
+    "        \"\"\"\n",
+    "        return la.det(self.qtq(matrix))\n",
+    "\n",
+    "A0 = np.random.rand(4,4)\n",
+    "print('Random matrix', A0)\n",
+    "A = Orthogonalization(A0)\n",
+    "\n",
+    "Q,R = A.householder()\n",
+    "print('Triangular matrix:', R)\n",
+    "print('Q@R:', Q@R)\n",
+    "print('Norm of Q:', A.norm(Q))\n",
+    "print('Deviation of QTQ from I:', A.deviation(Q))\n",
+    "print('QTQ allclose to I?', A.allclose(Q))\n",
+    "print('Eigenvalues of QTQ:', A.eigenvalues(Q))\n",
+    "print('Determinant of QTQ:', A.determinant(Q))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Task 5"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Random matrix [[ 0.63047837  0.16193227  0.27741012  0.47655692]\n",
+      " [ 0.08327226  0.32409549  0.83467416  0.52361767]\n",
+      " [ 0.52792633  0.34199413  0.61118677  0.23953597]\n",
+      " [ 0.79023356  0.81979877  0.22666604  0.44697969]]\n",
+      "Triangular matrix: [[ 0.74966945  0.27989116  0.36034183  0.5484195 ]\n",
+      " [ 0.85264977  0.81239686  0.5386989   0.42935593]\n",
+      " [ 0.01895898  0.19469265  0.88233857  0.43980411]\n",
+      " [-0.13504507 -0.37954844  0.         -0.28268741]]\n",
+      "q@r: [[ 0.7474486   0.26722404  0.43162555  0.55365428]\n",
+      " [-0.18070147 -0.18518276  0.53883784  0.01284418]\n",
+      " [ 0.82579939  0.89779583  0.72882464  0.57666333]\n",
+      " [-0.18529831  0.09247311  0.43672863  0.34527041]]\n",
+      "Norm: 1.0\n",
+      "Deviation from I of qtq: 2.78284930478e-16\n",
+      "Qtq allclose to I? True\n",
+      "Eigenvalues of qtq: [ 1.+0.j  1.+0.j  1.+0.j  1.+0.j]\n",
+      "Determinant of qtq: 0.9999999999999994\n"
+     ]
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "import scipy.linalg as la\n",
+    "\n",
+    "\n",
+    "class Orthogonalization():\n",
+    "    \"\"\"\n",
+    "    A class of matrices with methods that orthogonalize the objects with\n",
+    "    different algorithms and that evaluate the result in different ways.\n",
+    "    \"\"\"\n",
+    "    \n",
+    "    def __init__(self, givenmatrix):\n",
+    "        self.givenmatrix = givenmatrix\n",
+    "        \n",
+    "    def givens(self):\n",
+    "        \"\"\"\n",
+    "        Takes a (mxn)-matrix with m≥n and returns its QR-factorization as the\n",
+    "        two matrices Q, A, by using Givens rotations.\n",
+    "        \"\"\"\n",
+    "        A = self.givenmatrix\n",
+    "        m = shape(A)[0]\n",
+    "        n = shape(A)[1]\n",
+    "        Q = identity(m)\n",
+    "        for i in range(n): #counting through the columns of the matrix\n",
+    "            Q_i = identity(m)\n",
+    "            x = A[i:m,i]\n",
+    "            l = len(x)\n",
+    "            Q_i_hat = identity(l)\n",
+    "            for j in range(l-1):\n",
+    "                J_j = identity(l) #rotation matrix to be\n",
+    "                a = x[l-(j+2)]\n",
+    "                b = x[l-(j+1)]\n",
+    "                r = sqrt(a**2+b**2)\n",
+    "                c = a/r\n",
+    "                s = -b/r\n",
+    "                rotation = array([[c, -s], [s, c]])\n",
+    "                J_j[l-2-j:l-j, l-2-j:l-j] = rotation #rotation matrix in the \n",
+    "                                                    #(n-(i-1), n-i)-plane\n",
+    "                \n",
+    "                Q_i_hat = J_j@Q_i_hat #matrix for all the rotations of one vector\n",
+    "            Q_i[i:m,i:m] = Q_i_hat\n",
+    "            Q = Q_i@Q\n",
+    "            A = Q_i@A\n",
+    "        return Q, A\n",
+    "        \n",
+    "    def norm(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the 2-norm of a the input matrix A.\n",
+    "        \"\"\"\n",
+    "        return np.linalg.norm(matrix, ord=2)\n",
+    "        \n",
+    "        \n",
+    "    def qtq(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the matrix product of the transpose of the input matrix A with\n",
+    "        itself.\n",
+    "        \"\"\"\n",
+    "        return np.dot(matrix.transpose(),matrix)\n",
+    "        \n",
+    "    def deviation(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the deviation of the output matrix of qtq from the identity \n",
+    "        matrix.\n",
+    "        \"\"\"\n",
+    "        qtq = self.qtq(matrix)\n",
+    "        I = np.identity(len(qtq))\n",
+    "        return self.norm(I-qtq)\n",
+    "        \n",
+    "    def allclose(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns True/False if all the entries of QTQ are closer than a \n",
+    "        certain tolerance to the identity matrix.\n",
+    "        \"\"\"\n",
+    "        qtq = self.qtq(matrix)\n",
+    "        I = np.identity(len(qtq))\n",
+    "        return np.allclose(qtq, I)\n",
+    "        \n",
+    "    def eigenvalues(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns an array with the eigenvalues of qtq of the input matrix A.\n",
+    "        \"\"\"\n",
+    "        return la.eigvals(self.qtq(matrix))\n",
+    "    \n",
+    "    def determinant(self, matrix):\n",
+    "        \"\"\"\n",
+    "        Returns the determinant of qtq of the input matrix A.\n",
+    "        \"\"\"\n",
+    "        return la.det(self.qtq(matrix))\n",
+    "\n",
+    "A0 = np.random.rand(4,4)\n",
+    "print('Random matrix', A0)\n",
+    "A = Orthogonalization(A0)\n",
+    "\n",
+    "q,r = A.givens()\n",
+    "print('Triangular matrix:', r)\n",
+    "print('q@r:',q@r)\n",
+    "print('Norm:', A.norm(q))\n",
+    "print('Deviation from I of qtq:', A.deviation(q))\n",
+    "print('Qtq allclose to I?', A.allclose(q))\n",
+    "print('Eigenvalues of qtq:', A.eigenvalues(q))\n",
+    "print('Determinant of qtq:', A.determinant(q))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.5.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
